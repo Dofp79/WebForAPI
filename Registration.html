@@ -1,46 +1,77 @@
+<!-- 
+    Project: User Registration Form (Create / Edit)
+    Description:
+    This HTML file provides a responsive form interface for creating or editing a user profile.
+    - It uses Bootstrap for styling and layout.
+    - jQuery handles API calls to fetch, save or update user data.
+    - If a user ID is passed in the URL, the form loads that user's data for editing.
+    - Otherwise, it operates as a "create new user" form.
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- CSS -->
     <!-- Bootstrap CSS link -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
         integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous" />
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+
     <!-- Bootstrap JS bundle with Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
         crossorigin="anonymous"></script>
 </head>
+
 <body>
+    <!-- Bootstrap container: centers content and adds horizontal padding -->
     <div class="container">
+        <!-- Bootstrap row with top margin -->
         <div class="row mt-3">
+            <!-- Full-width column on all devices -->
             <div class="col-12">
                 <form>
+                    <!-- Hidden input to store user ID (used for editing) -->
                     <input type="hidden" id="txtiduser" />
+
+                    <!-- Input group for IC -->
                     <div class="form-group">
                         <label for="txtic">IC</label>
                         <input type="text" class="form-control" id="txtic" placeholder="" />
+                        <!-- .form-control applies standard Bootstrap styling to inputs -->
                     </div>
+
+                    <!-- Input group for Name -->
                     <div class="form-group">
                         <label for="txtname">Name</label>
                         <input type="text" class="form-control" id="txtname" placeholder="" />
                     </div>
+
+                    <!-- Input group for Phone -->
                     <div class="form-group">
                         <label for="txtphone">Phone</label>
                         <input type="text" class="form-control" id="txtphone" placeholder="" />
                     </div>
+
+                    <!-- Input group for Email -->
                     <div class="form-group">
                         <label for="txtemail">Email</label>
                         <input type="text" class="form-control" id="txtemail" placeholder="" />
                     </div>
+
+                    <!-- Input group for City -->
                     <div class="form-group">
                         <label for="txtcity">City</label>
                         <input type="text" class="form-control" id="txtcity" placeholder="" />
                     </div>
+
+                    <!-- Save Button: primary Bootstrap style -->
                     <button type="button" class="btn btn-primary" onclick="SaveUser()">
                         Save
                     </button>
+
+                    <!-- Back Button: warning Bootstrap style -->
                     <button type="button" class="btn btn-warning" onclick="GoToFormCreate()">
                         Back to
                     </button>
@@ -48,9 +79,12 @@
             </div>
         </div>
     </div>
+
+    <!-- JavaScript section -->
     <script>
         var edit = false;
 
+        // Executes after the page fully loads
         window.onload = function () {
             var id = $.urlParam("id");
             console.log(id);
@@ -61,21 +95,19 @@
             }
         };
 
-        // Function to extract query parameter from the URL
+        // Custom jQuery function: Get URL parameter by name
         $.urlParam = function (name) {
-            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-            if (results == null) {
-                return null;
-            }
+            var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null) return null;
             return decodeURI(results[1]) || 0;
         }
 
-        // Function to redirect user to the "Start.html" page for creating a new user
+        // Navigate to start page
         function GoToFormCreate() {
             window.location = "Start.html";
         }
 
-        // Function to fetch and populate user data for editing
+        // Load and populate user form for editing
         function PainUser(IdUser) {
             $.get("https://localhost:44375/api/User/" + IdUser).done(function (response) {
                 console.log(response);
@@ -87,10 +119,10 @@
             });
         }
 
-        // Function to save user data (Create or Update) on button click
+        // Save or update user depending on mode
         function SaveUser() {
             if (edit) {
-                // If editing existing user
+                // Update user
                 var data = {
                     IdUser: $("#txtiduser").val(),
                     IC: $("#txtic").val(),
@@ -98,40 +130,38 @@
                     Phone: $("#txtphone").val(),
                     Email: $("#txtemail").val(),
                     City: $("#txtcity").val()
-                }
+                };
 
                 $.ajax({
                     method: "PUT",
                     url: "https://localhost:44375/api/User",
                     contentType: 'application/json',
-                    data: JSON.stringify(data), // access in body
+                    data: JSON.stringify(data),
                 }).done(function (response) {
                     console.log(response);
                     if (response) {
                         alert("Changes were saved");
-                        window.location = "Start.html"; // Redirect to the "Start.html" page after saving changes
+                        window.location = "Start.html";
                     } else {
-                        alert("Error while modifying")
+                        alert("Error while modifying");
                     }
                 });
 
             } else {
-                // If creating a new user
+                // Create new user
                 var data = {
                     IC: $("#txtic").val(),
                     Name: $("#txtname").val(),
                     Phone: $("#txtphone").val(),
                     Email: $("#txtemail").val(),
                     City: $("#txtcity").val()
-                }
+                };
 
-                $.post("https://localhost:44375/api/User", data).done(function (
-                    response
-                ) {
+                $.post("https://localhost:44375/api/User", data).done(function (response) {
                     console.log(response);
                     if (response) {
                         alert("User Created");
-                        window.location = "Start.html"; // Redirect to the "Start.html" page after creating a new user
+                        window.location = "Start.html";
                     } else {
                         alert("Error while creating user");
                     }
