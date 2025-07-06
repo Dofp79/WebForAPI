@@ -5,7 +5,7 @@ It includes two main modules: a table view to display users, and a form to creat
 
 ---
 
-## Project Structure & Class Responsibilities
+## Project Structure & Class Responsibilities 
 
 ### 1. `Start.html`
 > **Purpose:** Displays a list of users retrieved from the backend.
